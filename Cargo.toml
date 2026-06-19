@@ -1,0 +1,26 @@
+[package]
+name = "rust_py_scheduler"
+version = "0.1.0"
+edition = "2024"
+description = "Core em Rust do rust-py-scheduler: scheduler de tarefas Python de alta performance."
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "rust_py_scheduler"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+chrono = { version = "0.4.45", default-features = false, features = ["clock", "std"] }
+pyo3 = { version = "0.29.0", features = ["abi3-py310"] }
+thiserror = "2"
+uuid = { version = "1", features = ["v4"] }
+
+[features]
+extension-module = ["pyo3/extension-module"]
+default = ["extension-module"]
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

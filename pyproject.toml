@@ -1,0 +1,41 @@
+[build-system]
+requires = ["maturin>=1.14,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "rust_py_scheduler"
+description = "Scheduler de tarefas Python leve e performático, com core em Rust (PyO3 + maturin)."
+requires-python = ">=3.10"
+license = "MIT"
+keywords = ["scheduler", "cron", "rust", "pyo3", "tasks", "jobs", "fastapi", "django", "celery"]
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+tests = ["pytest"]
+fastapi = ["fastapi", "uvicorn"]
+django = ["django>=4.2"]
+celery = ["celery"]
+dev = ["pytest", "fastapi", "uvicorn", "django>=4.2", "celery"]
+
+[tool.maturin]
+python-source = "python"
+exclude = [
+    "**/__pycache__",
+    "**/*.pyc",
+    "**/*.pyo"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
