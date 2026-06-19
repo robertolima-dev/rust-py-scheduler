@@ -2,6 +2,8 @@
 
 Lightweight, performant task scheduler for Python applications, with a Rust core.
 
+**[Website](https://rust-py-scheduler.vercel.app/)** · **[PyPI](https://pypi.org/project/rust-py-scheduler/)** · **[GitHub](https://github.com/robertolima-dev/rust-py-scheduler)**
+
 Register interval-based jobs (`"10s"`, `"5m"`, `"1h"`) or cron jobs (`"0 9 * * 1-5"`) with a plain function call or a decorator, run them in-process or on a background thread, and inspect their state (run/error counts, last error, next run time) at any point — without a database or an external broker. First-class FastAPI, Django, and Celery integrations are included.
 
 ---
