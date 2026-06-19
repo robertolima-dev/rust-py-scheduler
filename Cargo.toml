@@ -1,8 +1,8 @@
 [package]
 name = "rust_py_scheduler"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2024"
-description = "Core em Rust do rust-py-scheduler: scheduler de tarefas Python de alta performance."
+description = "Rust core of rust-py-scheduler: a high-performance task scheduler for Python."
 license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

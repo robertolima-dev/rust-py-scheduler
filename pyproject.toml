@@ -4,7 +4,8 @@ build-backend = "maturin"
 
 [project]
 name = "rust_py_scheduler"
-description = "Scheduler de tarefas Python leve e performático, com core em Rust (PyO3 + maturin)."
+description = "Lightweight, performant task scheduler for Python, with a Rust core (PyO3 + maturin). Interval and cron jobs, background execution, retries, and FastAPI/Django/Celery integrations."
+readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 keywords = ["scheduler", "cron", "rust", "pyo3", "tasks", "jobs", "fastapi", "django", "celery"]
