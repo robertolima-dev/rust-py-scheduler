@@ -1,15 +1,19 @@
 """
 FastAPI integration: the scheduler should start with the app and stop when
-the app's lifespan exits. We drive the full lifespan via TestClient used as a
-context manager, which is what actually triggers startup/shutdown.
+the app's lifespan exits.
+
+We drive the ``lifespan`` context manager directly with asyncio rather than
+going through ``fastapi.testclient.TestClient``. That's both a more focused
+test (it exercises *our* lifespan, not Starlette's HTTP plumbing) and avoids
+TestClient's httpx/httpx2 dependency churn across Starlette versions.
 """
+import asyncio
 import time
 
 import pytest
 
 fastapi = pytest.importorskip("fastapi")
 from fastapi import FastAPI  # noqa: E402
-from fastapi.testclient import TestClient  # noqa: E402
 
 from rust_py_scheduler import Scheduler  # noqa: E402
 from rust_py_scheduler.fastapi import scheduler_lifespan  # noqa: E402
@@ -22,17 +26,15 @@ def test_scheduler_runs_while_the_app_is_up():
 
     app = FastAPI(lifespan=scheduler_lifespan(scheduler))
 
-    @app.get("/")
-    def index():
-        return {"ok": True}
+    async def drive():
+        async with app.router.lifespan_context(app):
+            # The scheduler's background thread is running here.
+            time.sleep(2.5)
+            assert len(calls) >= 2
 
-    with TestClient(app) as client:
-        assert client.get("/").json() == {"ok": True}
-        time.sleep(2.5)
-        assert len(calls) >= 2
+    asyncio.run(drive())
 
-    # After the context manager exits, lifespan shutdown ran -> the scheduler
-    # was stopped and joined. Calling shutdown() again must be a safe no-op.
+    # After the lifespan exits, shutdown ran -> calling it again is a no-op.
     scheduler.shutdown()
 
 
@@ -43,8 +45,11 @@ def test_scheduler_is_stopped_after_lifespan_exit():
 
     app = FastAPI(lifespan=scheduler_lifespan(scheduler))
 
-    with TestClient(app):
-        time.sleep(1.5)
+    async def drive():
+        async with app.router.lifespan_context(app):
+            time.sleep(1.5)
+
+    asyncio.run(drive())
 
     calls_after_shutdown = len(calls)
     assert calls_after_shutdown >= 1
@@ -68,7 +73,10 @@ def test_composes_with_an_existing_lifespan():
 
     app = FastAPI(lifespan=scheduler_lifespan(scheduler, my_lifespan))
 
-    with TestClient(app):
-        assert events == ["startup"]
+    async def drive():
+        async with app.router.lifespan_context(app):
+            assert events == ["startup"]
+
+    asyncio.run(drive())
 
     assert events == ["startup", "shutdown"]
