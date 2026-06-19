@@ -35,12 +35,12 @@ jobs:
         env:
           PYO3_PYTHON: python
         run: cargo test --no-default-features --lib
-      - name: Build and install the extension
+      - name: Build, install the extension, and run Python tests
+        # `pip install` drives the maturin build backend, so it compiles the
+        # Rust extension and installs it (plus the dev extras) into the
+        # runner's Python — no virtualenv needed, unlike `maturin develop`.
         run: |
-          python -m pip install --upgrade pip maturin
-          maturin develop
-      - name: Python tests
-        run: |
+          python -m pip install --upgrade pip
           python -m pip install ".[dev]"
           python -m pytest
 
